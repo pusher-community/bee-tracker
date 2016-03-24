@@ -72,8 +72,11 @@ app.post('/', rawBodyMiddleware, (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile('index.html', {root: __dirname})
 })
-app.get('/key', (req, res) => {
-  res.send(process.env.PUSHER_APP_KEY)
+app.get('/config', (req, res) => {
+  res.send({
+    key: process.env.PUSHER_APP_KEY,
+    cluster: process.env.PUSHER_CLUSTER
+  })
 })
 
 

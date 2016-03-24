@@ -25,16 +25,17 @@
       .split(',').map(d => parseInt(d,10))
       .filter(d => d)
 
-    fetch('/key')
-      .then( r => r.text() )
-      .then( key => {
+    fetch('/config')
+      .then( r => r.json() )
+      .then( config => {
 
         if(!channels.length)
           return window.location = '/?3,8,9'
 
 
-        var pusher = new Pusher(key, {
-          encrypted: true
+        var pusher = new Pusher(config.key, {
+          encrypted: true,
+          cluster: config.cluster
         })
 
         channels.forEach( c => {
