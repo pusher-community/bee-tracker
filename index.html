@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pusher Test</title>
+    <style media="screen">
+      body {
+        font-family: sans-serif;
+      }
+      code {
+        background: #e6e6e6;
+        white-space: pre;
+        display: block;
+        border-bottom:1px solid #aaa;
+        min-height: 3em;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+
+    <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+    <script>
+
+    var channels = document.location.search.substr(1)
+      .split(',').map(d => parseInt(d,10))
+      .filter(d => d)
+
+    fetch('/key')
+      .then( r => r.text() )
+      .then( key => {
+
+        if(!channels.length)
+          return window.location = '/?3,8,9'
+
+
+        var pusher = new Pusher(key, {
+          encrypted: true
+        })
+
+        channels.forEach( c => {
+          var name = 'lorem-' + c
+
+          var heading = document.createElement('h1')
+          document.body.appendChild(heading)
+
+          var content =  document.createElement('code')
+          document.body.appendChild(content)
+
+          heading.textContent = name
+
+          pusher
+            .subscribe(name)
+            .bind('message', function(data) {
+              console.log(name, data);
+              content.textContent = JSON.stringify(data, null, 2)
+            })
+
+        })
+
+      })
+
+    </script>
+  </body>
+</html>
