@@ -1,7 +1,8 @@
 require('dotenv').config({silent:true})
 
+const Radar = require('./lib/Radar')
+
 const Pusher = require('pusher')
-const faker = require('faker')
 const express = require('express')
 const getRawBody = require('raw-body')
 
@@ -84,38 +85,33 @@ app.listen(process.env.PORT || 3000)
 
 
 
+
 /*
-  Publish events to any suitable channels
+  Publish events
 */
+
+// a radar that takes 1000ms to sweep around looking for bees
+const radar = new Radar(1000)
+
 
 // roughly every second, check to see if
 // there are any channels that need posting to
-const checkRE = /lorem-(\d+)/
-const check = () => {
+const sweep = () => {
 
-  const seconds = Math.floor( Date.now() / 1000 )
+  // find out which bees people are watchine
+  const ids = Array.from(channels)
+                   .map(name => parseInt(name, 10))
+                   .filter(isFinite)
 
-  Array.from(channels)
+  radar.search(
+    ids,
+    bee => {
+      client.trigger(bee.id, 'move', bee.data())
+    }
+  )
 
-    // are they in the right format?
-    .map( c => checkRE.exec(c) )
-    .filter( m => m )
-
-    // should they fire this second?
-    .filter( m => (seconds % parseInt(m[1])) == 0 )
-
-    // cool.
-    .forEach( m =>
-      client.trigger(m[0], 'message', {
-        name:   faker.name.findName(),
-        avatar: faker.image.avatar(),
-        text:   faker.lorem.sentence()
-      })
-    )
-
-
-  // check again around .5s past the second
-  setTimeout(check, 1500 - (Date.now() % 1000) )
+  // sweep again around .5s past the second
+  setTimeout(sweep, 1500 - (Date.now() % 1000) )
 
 }
-check()
+sweep()
