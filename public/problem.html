@@ -6,15 +6,14 @@
     <style media="screen">
       body {
         font-family: sans-serif;
-        margin:0;
+      }
+      a {
+        color: #08f
       }
     </style>
   </head>
   <body {{#each bodyData}} data-{{@key}}="{{this}}"{{/each}}>
-
-    <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
-    <script src="three.min.js"></script>
-    <script src="frontend.js"></script>
+    <h1>Usage: <a href="{{url}}">{{url}}</a></h1>
 
   </body>
 </html>

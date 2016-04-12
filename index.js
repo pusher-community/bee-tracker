@@ -5,6 +5,7 @@ const Radar = require('./lib/Radar')
 const Pusher = require('pusher')
 const express = require('express')
 const getRawBody = require('raw-body')
+const exphbs  = require('express-handlebars');
 
 const client = new Pusher({
   appId:   process.env.PUSHER_APP_ID,
@@ -69,15 +70,37 @@ app.post('/', rawBodyMiddleware, (req, res) => {
   console.log("channels:", channels)
 })
 
+
+app.engine('html', exphbs())
+app.set('view engine', 'html')
+app.set('views', __dirname + '/public')
+
+app.get('/', (req, res) => {
+
+  const bees = (req.query.bees||'').split(',')
+                .map(b => parseInt(b, 10))
+                .filter(isFinite)
+                // .filter(b => b < 100)
+                .slice(0, 10)
+
+  if(bees.length) {
+    res.render('index', {
+      bodyData: {
+        key: process.env.PUSHER_APP_KEY,
+        cluster: process.env.PUSHER_CLUSTER,
+        bees: bees
+      }
+    })
+  } else {
+    res.render('problem', {
+      url: '/?bees=' + Array.from({length: 6}, _ => Math.ceil(Math.random() * 100)).join(',')
+    })
+  }
+
+} )
+
 // also expose a test script and key
 app.use(express.static('public'))
-
-app.get('/config', (req, res) => {
-  res.send({
-    key: process.env.PUSHER_APP_KEY,
-    cluster: process.env.PUSHER_CLUSTER
-  })
-})
 
 
 app.listen(process.env.PORT || 3000)
