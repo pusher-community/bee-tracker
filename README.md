@@ -1,5 +1,6 @@
-# lorem-chat
-A chatty bot that will only talk when there's someone listening
+# Bee Tracker
+
+This is an example of using webhooks to monitor which channels are occupied.
 
 
 ## Running
