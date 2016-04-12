@@ -106,7 +106,7 @@ const sweep = () => {
   radar.search(
     ids,
     bee => {
-      client.trigger(bee.id, 'move', bee.data())
+      client.trigger(String(bee.id), 'move', bee.data())
     }
   )
 
