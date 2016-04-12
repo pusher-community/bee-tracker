@@ -160,7 +160,7 @@ var pusher = new Pusher(config.key, {
 })
 
 
-config.bees.split(',').forEach( name => {
+config.bees.split(',').forEach( function(name) {
   pusher
     .subscribe(name)
     .bind('move', function(data) {
