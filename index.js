@@ -70,9 +70,8 @@ app.post('/', rawBodyMiddleware, (req, res) => {
 })
 
 // also expose a test script and key
-app.get('/', (req, res) => {
-  res.sendFile('index.html', {root: __dirname})
-})
+app.use(express.static('public'))
+
 app.get('/config', (req, res) => {
   res.send({
     key: process.env.PUSHER_APP_KEY,
